@@ -3,6 +3,9 @@
 // 布局类型
 export type LayoutType = 'vertical' | 'horizontal' | 'split-right'
 
+// 节点状态类型
+export type NodeStatus = 'idle' | 'running' | 'done'
+
 export interface AgentCallback {
   handleAgentAction?(action: string): void
   handleAgentEnd?(result: string): void

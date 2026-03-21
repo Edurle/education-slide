@@ -2,6 +2,7 @@
 import type { SlideContent } from '@/types'
 import MarkdownRenderer from './MarkdownRenderer.vue'
 import Diagram from './Diagram.vue'
+import AgentDemo from './AgentDemo.vue'
 
 defineProps<{
   content: SlideContent
@@ -24,13 +25,12 @@ defineProps<{
           :edges="content.items[0].edges"
           class="slide-item"
         />
-        <div
+        <AgentDemo
           v-else-if="content.items[0].type === 'agent'"
-          class="slide-item agent-placeholder"
-        >
-          <p class="placeholder-text">[AgentDemo - Phase 3]</p>
-          <pre>{{ JSON.stringify(content.items[0], null, 2) }}</pre>
-        </div>
+          :agent-type="content.items[0].agentType"
+          :input="content.items[0].input"
+          class="slide-item"
+        />
       </div>
       <div class="split-right">
         <template v-for="(item, index) in content.items.slice(1)" :key="index">
@@ -45,13 +45,12 @@ defineProps<{
             :edges="item.edges"
             class="slide-item"
           />
-          <div
+          <AgentDemo
             v-else-if="item.type === 'agent'"
-            class="slide-item agent-placeholder"
-          >
-            <p class="placeholder-text">[AgentDemo - Phase 3]</p>
-            <pre>{{ JSON.stringify(item, null, 2) }}</pre>
-          </div>
+            :agent-type="item.agentType"
+            :input="item.input"
+            class="slide-item"
+          />
         </template>
       </div>
     </template>
@@ -70,13 +69,12 @@ defineProps<{
           :edges="item.edges"
           class="slide-item"
         />
-        <div
+        <AgentDemo
           v-else-if="item.type === 'agent'"
-          class="slide-item agent-placeholder"
-        >
-          <p class="placeholder-text">[AgentDemo - Phase 3]</p>
-          <pre>{{ JSON.stringify(item, null, 2) }}</pre>
-        </div>
+          :agent-type="item.agentType"
+          :input="item.input"
+          class="slide-item"
+        />
       </template>
     </template>
   </div>
@@ -123,26 +121,5 @@ defineProps<{
 
 .slide-item {
   margin-bottom: 0;
-}
-
-.agent-placeholder {
-  background: rgba(66, 184, 131, 0.1);
-  border: 2px dashed #42b883;
-  border-radius: 8px;
-  padding: 1.5rem;
-}
-
-.placeholder-text {
-  color: #42b883;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.agent-placeholder pre {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 1rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  overflow-x: auto;
 }
 </style>
