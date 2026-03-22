@@ -13,9 +13,25 @@ export default {
 `,
     },
     {
-      type: 'agent',
+      type: 'configurable-agent',
+      config: {
+        name: '工具调用 Agent',
+        layout: 'horizontal',
+        components: [
+          { id: 'input', type: 'input', label: 'Input' },
+          { id: 'llm', type: 'llm', label: 'LLM' },
+          { id: 'tools', type: 'tool', label: 'Tools' },
+          { id: 'output', type: 'output', label: 'Output' },
+        ],
+        connections: [
+          { from: 'input', to: 'llm', label: '问题' },
+          { from: 'llm', to: 'tools', label: '调用' },
+          { from: 'tools', to: 'llm', label: '结果', bidirectional: true },
+          { from: 'llm', to: 'output', label: '回答' },
+        ],
+        defaultInput: '今天北京的天气如何？',
+      },
       agentType: 'tool',
-      input: '今天北京的天气如何？',
     },
     {
       type: 'markdown',

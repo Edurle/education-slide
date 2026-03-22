@@ -2,7 +2,6 @@
 import type { SlideContent } from '@/types'
 import MarkdownRenderer from './MarkdownRenderer.vue'
 import Diagram from './Diagram.vue'
-import AgentDemo from './AgentDemo.vue'
 import ConfigurableAgent from './ConfigurableAgent.vue'
 
 defineProps<{
@@ -26,12 +25,6 @@ defineProps<{
           :edges="content.items[0].edges"
           class="slide-item"
         />
-        <AgentDemo
-          v-else-if="content.items[0].type === 'agent'"
-          :agent-type="content.items[0].agentType"
-          :input="content.items[0].input"
-          class="slide-item"
-        />
         <ConfigurableAgent
           v-else-if="content.items[0].type === 'configurable-agent'"
           :config="content.items[0].config"
@@ -50,12 +43,6 @@ defineProps<{
             v-else-if="item.type === 'diagram'"
             :nodes="item.nodes"
             :edges="item.edges"
-            class="slide-item"
-          />
-          <AgentDemo
-            v-else-if="item.type === 'agent'"
-            :agent-type="item.agentType"
-            :input="item.input"
             class="slide-item"
           />
           <ConfigurableAgent
@@ -80,12 +67,6 @@ defineProps<{
           v-else-if="item.type === 'diagram'"
           :nodes="item.nodes"
           :edges="item.edges"
-          class="slide-item"
-        />
-        <AgentDemo
-          v-else-if="item.type === 'agent'"
-          :agent-type="item.agentType"
-          :input="item.input"
           class="slide-item"
         />
         <ConfigurableAgent

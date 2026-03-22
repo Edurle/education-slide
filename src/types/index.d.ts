@@ -41,12 +41,6 @@ export interface DiagramItem {
   edges: DiagramEdge[]
 }
 
-export interface AgentItem {
-  type: 'agent'
-  agentType: 'qa' | 'tool'
-  input?: string
-}
-
 // 导入可配置 Agent 类型
 import type { AgentArchitectureConfig } from './agent-config'
 
@@ -56,7 +50,7 @@ export interface ConfigurableAgentItem {
   agentType?: 'qa' | 'tool'  // 可选：连接真实后端
 }
 
-export type SlideItem = MarkdownItem | DiagramItem | AgentItem | ConfigurableAgentItem
+export type SlideItem = MarkdownItem | DiagramItem | ConfigurableAgentItem
 
 export interface SlideContent {
   title?: string  // 可选：幻灯片标题
