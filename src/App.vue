@@ -2,197 +2,39 @@
 import { ref } from 'vue'
 import Slide from './components/Slide.vue'
 import Diagram from './components/Diagram.vue'
-import type { SlideContent, DiagramNode, DiagramEdge } from './types'
+import type { DiagramNode, DiagramEdge } from './types'
+import { getAllSlides, courseConfig } from './slides'
 import './style.css'
+
+// 加载所有幻灯片
+const slides = getAllSlides()
+
+// 侧边栏状态
+const showToc = ref(false)
+
+// 切换侧边栏
+function toggleToc() {
+  showToc.value = !showToc.value
+}
+
+// 滚动到指定幻灯片
+function scrollToSlide(index: number) {
+  const slideElements = document.querySelectorAll('.slide-section')
+  const targetElement = slideElements[index]
+  if (targetElement) {
+    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    showToc.value = false
+  }
+}
+
+// 获取幻灯片在全部幻灯片中的索引
+function getSlideIndex(chapterId: string, slideId: string): number {
+  return slides.findIndex(s => s.chapterId === chapterId && s.slideId === slideId)
+}
 
 // Diagram refs for testing
 const testDiagramRef = ref<InstanceType<typeof Diagram> | null>(null)
 const bidirectionalDiagramRef = ref<InstanceType<typeof Diagram> | null>(null)
-
-// 垂直布局示例
-const introSlide: SlideContent = {
-  layout: 'vertical',
-  items: [
-    {
-      type: 'markdown',
-      content: `# 第一章：什么是 Agent？
-
-## 定义
-
-Agent（智能体）是一个能够**感知环境**并**采取行动**以实现目标的系统。
-
-核心特征：
-- 自主性 (Autonomy)
-- 反应性 (Reactivity)
-- 主动性 (Pro-activeness)
-- 社交性 (Social ability)
-
-## 数学表示
-
-Agent 可以形式化为：
-
-$$
-Agent: S \times A \rightarrow S
-$$
-
-其中 $S$ 是状态空间，$A$ 是动作空间。
-`,
-    },
-    {
-      type: 'markdown',
-      content: `## 代码示例
-
-\`\`\`typescript
-interface Agent<State, Action> {
-  // 感知当前状态
-  perceive(): State
-
-  // 决策下一步行动
-  decide(state: State): Action
-
-  // 执行行动
-  act(action: Action): void
-}
-\`\`\`
-`,
-    },
-  ],
-}
-
-// 水平布局示例
-const horizontalSlide: SlideContent = {
-  layout: 'horizontal',
-  items: [
-    {
-      type: 'markdown',
-      content: `## 特性一
-
-**自主性**
-
-Agent 能够独立运行，不需要人类持续干预。
-`,
-    },
-    {
-      type: 'markdown',
-      content: `## 特性二
-
-**反应性**
-
-Agent 能够感知环境变化并及时响应。
-`,
-    },
-    {
-      type: 'markdown',
-      content: `## 特性三
-
-**主动性**
-
-Agent 能够主动采取行动实现目标。
-`,
-    },
-  ],
-}
-
-// 左右分栏布局示例
-const architectureSlide: SlideContent = {
-  layout: 'split-right',
-  items: [
-    {
-      type: 'markdown',
-      content: `# Agent 架构
-
-## 基本组件
-
-一个典型的 Agent 系统包含以下组件：
-
-1. **Input** - 用户输入
-2. **LLM** - 大语言模型
-3. **Tools** - 外部工具
-4. **Output** - 响应输出
-`,
-    },
-    {
-      type: 'diagram',
-      nodes: [
-        { id: 'input', label: 'Input', x: 100, y: 50, status: 'idle' },
-        { id: 'llm', label: 'LLM', x: 250, y: 50, status: 'idle' },
-        { id: 'tools', label: 'Tools', x: 250, y: 150, status: 'idle' },
-        { id: 'output', label: 'Output', x: 400, y: 50, status: 'idle' },
-      ],
-      edges: [
-        { from: 'input', to: 'llm' },
-        { from: 'llm', to: 'tools' },
-        { from: 'tools', to: 'llm' },
-        { from: 'llm', to: 'output' },
-      ],
-    },
-    {
-      type: 'markdown',
-      content: `### 数据流
-
-1. **Input** - 用户输入或环境感知
-2. **LLM** - 大语言模型进行推理
-3. **Tools** - 调用外部工具
-4. **Output** - 生成响应
-`,
-    },
-  ],
-}
-
-const agentDemoSlide: SlideContent = {
-  items: [
-    {
-      type: 'markdown',
-      content: `# Agent 演示
-
-## 实时交互
-
-下面是一个 Agent 实时运行的示例：
-`,
-    },
-    {
-      type: 'agent',
-      agentType: 'tool',
-      input: '今天北京的天气如何？',
-    },
-    {
-      type: 'markdown',
-      content: `### 运行流程
-
-Agent 会自动：
-1. 解析用户意图
-2. 选择合适的工具
-3. 执行并返回结果
-`,
-    },
-  ],
-}
-
-// 状态动画测试
-const statusTestSlide: SlideContent = {
-  layout: 'vertical',
-  items: [
-    {
-      type: 'markdown',
-      content: `# Diagram 状态测试
-
-测试三种状态：idle（蓝灰）、running（黄色脉冲）、done（绿色）
-`,
-    },
-    {
-      type: 'diagram',
-      nodes: [
-        { id: 'idle1', label: 'Idle', x: 20, y: 30, status: 'idle' },
-        { id: 'running1', label: 'Running', x: 50, y: 30, status: 'running' },
-        { id: 'done1', label: 'Done', x: 80, y: 30, status: 'done' },
-      ],
-      edges: [
-        { from: 'idle1', to: 'running1', label: 'start' },
-        { from: 'running1', to: 'done1', label: 'complete' },
-      ],
-    },
-  ],
-}
 
 // 边流动动画测试数据（带边 ID）
 const flowTestNodes: DiagramNode[] = [
@@ -257,47 +99,44 @@ function resetBidirectional() {
 
 <template>
   <div class="app">
-    <header>
-      <h1>Agent Education - Phase 2 架构图动画</h1>
+    <header class="fixed-header">
+      <button class="toc-toggle" @click="toggleToc" :class="{ active: showToc }">
+        <span class="toc-icon">☰</span>
+      </button>
+      <h1>{{ courseConfig.title }}</h1>
     </header>
 
-    <main>
-      <!-- 垂直布局 -->
-      <section class="slide-section">
-        <div class="layout-label">布局: vertical（垂直堆叠）</div>
-        <Slide :content="introSlide" />
-      </section>
+    <!-- 侧边栏目录 -->
+    <aside class="toc-sidebar" :class="{ open: showToc }">
+      <nav class="toc-nav">
+        <div v-for="chapter in courseConfig.chapters" :key="chapter.id" class="toc-chapter">
+          <div class="toc-chapter-title">{{ chapter.title }}</div>
+          <ul class="toc-slides">
+            <li
+              v-for="slide in chapter.slides"
+              :key="slide.id"
+              class="toc-slide-item"
+              @click="scrollToSlide(getSlideIndex(chapter.id, slide.id))"
+            >
+              {{ slide.title }}
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
 
-      <hr class="divider" />
-
-      <!-- 水平布局 -->
-      <section class="slide-section">
-        <div class="layout-label">布局: horizontal（水平排列）</div>
-        <Slide :content="horizontalSlide" />
-      </section>
-
-      <hr class="divider" />
-
-      <!-- 左右分栏布局 -->
-      <section class="slide-section">
-        <div class="layout-label">布局: split-right（左右分栏）</div>
-        <Slide :content="architectureSlide" />
-      </section>
-
-      <hr class="divider" />
-
-      <!-- 默认布局 -->
-      <section class="slide-section">
-        <div class="layout-label">布局: vertical（默认）</div>
-        <Slide :content="agentDemoSlide" />
-      </section>
-
-      <hr class="divider" />
-
-      <!-- 状态测试 -->
-      <section class="slide-section">
-        <div class="layout-label">Diagram 状态测试</div>
-        <Slide :content="statusTestSlide" />
+    <main class="scroll-content">
+      <!-- 所有幻灯片垂直排列 -->
+      <section
+        v-for="(slide, index) in slides"
+        :key="`${slide.chapterId}-${slide.slideId}`"
+        class="slide-section"
+      >
+        <div class="slide-header">
+          <span class="slide-number">{{ index + 1 }}</span>
+          <h2 v-if="slide.content.title" class="slide-title">{{ slide.content.title }}</h2>
+        </div>
+        <Slide :content="slide.content" />
       </section>
 
       <hr class="divider" />
@@ -396,22 +235,142 @@ function resetBidirectional() {
   min-height: 100vh;
 }
 
-header {
-  text-align: center;
-  padding: 1rem 0;
-  background: rgba(66, 184, 131, 0.1);
+/* 固定顶部标题栏 */
+.fixed-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
   border-bottom: 2px solid #42b883;
 }
 
-header h1 {
+.fixed-header h1 {
   color: #42b883;
   margin: 0;
+  font-size: 1.2rem;
 }
 
-.slide-section {
-  min-height: 80vh;
+/* 目录切换按钮 */
+.toc-toggle {
+  position: absolute;
+  left: 1rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #42b883;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.toc-toggle:hover {
+  background: #35a070;
+}
+
+.toc-toggle.active {
+  background: #2c3e50;
+}
+
+/* 目录侧边栏 */
+.toc-sidebar {
+  position: fixed;
+  right: -280px;
+  top: 70px;
+  width: 260px;
+  height: calc(100vh - 90px);
+  max-height: calc(100vh - 90px);
+  background: white;
+  border-left: 1px solid #e0e0e0;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease;
+  z-index: 150;
+  overflow-y: auto;
+}
+
+.toc-sidebar.open {
+  right: 0;
+}
+
+/* 目录导航 */
+.toc-nav {
+  padding: 1rem;
+}
+
+.toc-chapter {
+  margin-bottom: 0.5rem;
+}
+
+.toc-chapter-title {
+  font-weight: bold;
+  color: #42b883;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.toc-slide-item {
+  display: block;
+  padding: 0.5rem 0.75rem 0.5rem 1.5rem;
+  color: #666;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.toc-slide-item:hover {
+  background: rgba(66, 184, 131, 0.1);
+  border-left-color: #42b883;
+}
+
+/* 滚动内容区 */
+.scroll-content {
+  padding-bottom: 4rem;
+}
+
+/* 幻灯片区块 */
+.slide-section {
+  padding: 2rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* 幻灯片标题 */
+.slide-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.slide-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #42b883;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.slide-title {
+  color: #333;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 0;
 }
 
 .layout-label {

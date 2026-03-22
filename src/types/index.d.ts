@@ -50,6 +50,7 @@ export interface AgentItem {
 export type SlideItem = MarkdownItem | DiagramItem | AgentItem
 
 export interface SlideContent {
+  title?: string  // 可选：幻灯片标题
   layout?: LayoutType  // 默认 'vertical'
   items: SlideItem[]
 }
