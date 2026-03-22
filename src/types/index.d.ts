@@ -47,7 +47,16 @@ export interface AgentItem {
   input?: string
 }
 
-export type SlideItem = MarkdownItem | DiagramItem | AgentItem
+// 导入可配置 Agent 类型
+import type { AgentArchitectureConfig } from './agent-config'
+
+export interface ConfigurableAgentItem {
+  type: 'configurable-agent'
+  config: AgentArchitectureConfig
+  agentType?: 'qa' | 'tool'  // 可选：连接真实后端
+}
+
+export type SlideItem = MarkdownItem | DiagramItem | AgentItem | ConfigurableAgentItem
 
 export interface SlideContent {
   title?: string  // 可选：幻灯片标题

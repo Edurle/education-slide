@@ -19,6 +19,7 @@ export const courseConfig = {
         { id: '03-agent-demo', title: 'Agent 演示' },
         { id: '04-features', title: 'Agent 特性' },
         { id: '05-status-test', title: 'Diagram 状态测试' },
+        { id: '06-custom-agent', title: '多工具 Agent 架构' },
       ]
     }
   ]
