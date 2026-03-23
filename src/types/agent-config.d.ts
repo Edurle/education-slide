@@ -36,7 +36,7 @@ export interface AgentArchitectureConfig {
   /** 架构名称 */
   name: string
   /** 布局方式 */
-  layout?: 'horizontal' | 'vertical' | 'tree'
+  layout?: 'horizontal' | 'vertical' | 'tree' | 'center'
   /** 组件列表 */
   components: AgentComponent[]
   /** 组件连接 */

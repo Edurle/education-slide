@@ -71,6 +71,60 @@ function calculateVerticalLayout(
 }
 
 /**
+ * 中心布局：LLM 和 Output 在中间，其他节点分布在两侧
+ */
+function calculateCenterLayout(
+  components: AgentComponent[]
+): Map<string, { x: number; y: number }> {
+  const positions = new Map<string, { x: number; y: number }>()
+
+  // 分类组件
+  const leftComponents = components.filter(c =>
+    c.type === 'input' || c.type === 'memory' || c.type === 'router'
+  )
+  const rightComponents = components.filter(c =>
+    c.type === 'tool' || c.type === 'custom'
+  )
+
+  // 中心列：LLM 在上 (25%)，Output 在下 (75%)
+  const llm = components.find(c => c.type === 'llm')
+  const output = components.find(c => c.type === 'output')
+  if (llm) positions.set(llm.id, { x: 50, y: 25 })
+  if (output) positions.set(output.id, { x: 50, y: 75 })
+
+  // 左侧列：竖向均匀分布 (20%-80%)
+  if (leftComponents.length > 0) {
+    const ySpacing = leftComponents.length === 1 ? 0 : 60 / (leftComponents.length - 1)
+    leftComponents.forEach((comp, i) => {
+      positions.set(comp.id, {
+        x: 20,
+        y: 20 + (leftComponents.length === 1 ? 30 : i * ySpacing)
+      })
+    })
+  }
+
+  // 右侧列：竖向均匀分布 (20%-80%)
+  if (rightComponents.length > 0) {
+    const ySpacing = rightComponents.length === 1 ? 0 : 60 / (rightComponents.length - 1)
+    rightComponents.forEach((comp, i) => {
+      positions.set(comp.id, {
+        x: 80,
+        y: 20 + (rightComponents.length === 1 ? 30 : i * ySpacing)
+      })
+    })
+  }
+
+  // 未分类组件放中间
+  components.forEach(comp => {
+    if (!positions.has(comp.id)) {
+      positions.set(comp.id, { x: 50, y: 50 })
+    }
+  })
+
+  return positions
+}
+
+/**
  * 简单树形布局（用于有层级关系的组件）
  * 假设第一个是 input，最后一个是 output
  */
@@ -143,6 +197,9 @@ export function convertToNodes(
       break
     case 'tree':
       positions = calculateTreeLayout(config.components)
+      break
+    case 'center':
+      positions = calculateCenterLayout(config.components)
       break
     default:
       positions = calculateHorizontalLayout(config.components)

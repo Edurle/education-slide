@@ -17,6 +17,7 @@ export const courseConfig = {
         { id: '01-what-is-agent', title: '什么是 Agent' },
         { id: '02-architecture', title: 'Agent 架构' },
         { id: '03-agent-demo', title: 'Agent 演示' },
+        { id: '04-langchain-agent-demo', title: 'LangChain Agent 演示' },
         { id: '04-features', title: 'Agent 特性' },
         { id: '05-status-test', title: 'Diagram 状态测试' },
         { id: '06-custom-agent', title: '多工具 Agent 架构' },

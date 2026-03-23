@@ -22,7 +22,7 @@ export interface AgentEvent {
 }
 
 export interface RunAgentOptions {
-  agentType: 'qa' | 'tool'
+  agentType: 'qa' | 'tool' | 'langchain'
   input: string
   onNodeStatus?: (nodeId: string, status: NodeStatus) => void
   onEdgeActivate?: (edgeId: string) => void

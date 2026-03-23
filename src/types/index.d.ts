@@ -47,7 +47,7 @@ import type { AgentArchitectureConfig } from './agent-config'
 export interface ConfigurableAgentItem {
   type: 'configurable-agent'
   config: AgentArchitectureConfig
-  agentType?: 'qa' | 'tool'  // 可选：连接真实后端
+  agentType?: 'qa' | 'tool' | 'langchain'  // 可选：连接真实后端
 }
 
 export type SlideItem = MarkdownItem | DiagramItem | ConfigurableAgentItem

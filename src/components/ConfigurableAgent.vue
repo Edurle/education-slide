@@ -8,7 +8,7 @@ import type { DiagramNode, DiagramEdge, NodeStatus } from '@/types'
 
 const props = defineProps<{
   config: AgentArchitectureConfig
-  agentType?: 'qa' | 'tool'
+  agentType?: 'qa' | 'tool' | 'langchain'
 }>()
 
 // 转换配置为 Diagram 数据

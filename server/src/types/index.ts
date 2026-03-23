@@ -22,7 +22,7 @@ export interface AgentEvent {
 
 // Request body for /api/agent/run
 export interface RunAgentRequest {
-  agentType: 'qa' | 'tool'
+  agentType: 'qa' | 'tool' | 'langchain'
   input: string
   sessionId?: string
 }

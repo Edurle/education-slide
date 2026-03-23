@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from 'express'
 import type { AgentEvent, RunAgentRequest } from '../types/index.js'
 import { QAAgent } from '../agents/QAAgent.js'
 import { ToolAgent } from '../agents/ToolAgent.js'
+import { LangChainAgent } from '../agents/LangChainAgent.js'
 
 export const agentRouter = Router()
 
@@ -14,8 +15,8 @@ agentRouter.post('/run', async (req: Request, res: Response) => {
     return
   }
 
-  if (agentType !== 'qa' && agentType !== 'tool') {
-    res.status(400).json({ error: 'Invalid agentType. Must be "qa" or "tool"' })
+  if (agentType !== 'qa' && agentType !== 'tool' && agentType !== 'langchain') {
+    res.status(400).json({ error: 'Invalid agentType. Must be "qa", "tool", or "langchain"' })
     return
   }
 
@@ -54,7 +55,10 @@ agentRouter.post('/run', async (req: Request, res: Response) => {
   }
 
   // Create agent based on type
-  const agent = agentType === 'qa' ? new QAAgent() : new ToolAgent()
+  const agent =
+    agentType === 'qa' ? new QAAgent() :
+    agentType === 'tool' ? new ToolAgent() :
+    new LangChainAgent()
   agent.setSSECallback(sseCallback)
 
   // Handle client disconnect
