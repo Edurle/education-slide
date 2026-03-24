@@ -3,6 +3,7 @@ import type { SlideContent } from '@/types'
 import MarkdownRenderer from './MarkdownRenderer.vue'
 import Diagram from './Diagram.vue'
 import ConfigurableAgent from './ConfigurableAgent.vue'
+import SvgRenderer from './SvgRenderer.vue'
 
 defineProps<{
   content: SlideContent
@@ -31,6 +32,11 @@ defineProps<{
           :agent-type="content.items[0].agentType"
           class="slide-item"
         />
+        <SvgRenderer
+          v-else-if="content.items[0].type === 'svg'"
+          :content="content.items[0].content"
+          class="slide-item"
+        />
       </div>
       <div class="split-right">
         <template v-for="(item, index) in content.items.slice(1)" :key="index">
@@ -49,6 +55,11 @@ defineProps<{
             v-else-if="item.type === 'configurable-agent'"
             :config="item.config"
             :agent-type="item.agentType"
+            class="slide-item"
+          />
+          <SvgRenderer
+            v-else-if="item.type === 'svg'"
+            :content="item.content"
             class="slide-item"
           />
         </template>
@@ -73,6 +84,11 @@ defineProps<{
           v-else-if="item.type === 'configurable-agent'"
           :config="item.config"
           :agent-type="item.agentType"
+          class="slide-item"
+        />
+        <SvgRenderer
+          v-else-if="item.type === 'svg'"
+          :content="item.content"
           class="slide-item"
         />
       </template>

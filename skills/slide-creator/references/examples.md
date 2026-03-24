@@ -5,7 +5,7 @@
 最简单的 slide 类型，适合文字说明、公式、代码。
 
 ```typescript
-// src/slides/chapter1/01-what-is-agent.ts
+// src/slides/example/01-what-is-agent.ts
 import type { SlideContent } from '@/types'
 
 export default {
@@ -64,7 +64,7 @@ interface Agent<State, Action> {
 适合图文并排展示。
 
 ```typescript
-// src/slides/chapter1/02-architecture.ts
+// src/slides/example/02-architecture.ts
 import type { SlideContent } from '@/types'
 
 export default {
@@ -121,7 +121,7 @@ export default {
 适合需要用户交互和动画演示的场景。
 
 ```typescript
-// src/slides/chapter1/03-agent-demo.ts
+// src/slides/example/03-agent-demo.ts
 import type { SlideContent } from '@/types'
 
 export default {
@@ -178,7 +178,7 @@ Agent 会自动：
 展示更复杂的 Agent 架构。
 
 ```typescript
-// src/slides/chapter1/06-custom-agent.ts
+// src/slides/example/06-custom-agent.ts
 import type { SlideContent } from '@/types'
 
 export default {
@@ -223,7 +223,7 @@ export default {
 只展示架构图，无文字说明。
 
 ```typescript
-// src/slides/chapter1/05-diagram-only.ts
+// src/slides/example/05-diagram-only.ts
 import type { SlideContent } from '@/types'
 
 export default {
@@ -273,8 +273,8 @@ export const courseConfig = {
   title: 'AI Agent 入门教程',
   chapters: [
     {
-      id: 'chapter1',
-      title: '第一章：Agent 基础',
+      id: 'example',
+      title: '示例章节',
       slides: [
         { id: '01-what-is-agent', title: '什么是 Agent' },
         { id: '02-architecture', title: 'Agent 架构' },

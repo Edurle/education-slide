@@ -27,7 +27,7 @@ type LayoutType = 'vertical' | 'horizontal' | 'split-right'
 ### SlideItem
 
 ```typescript
-type SlideItem = MarkdownItem | DiagramItem | ConfigurableAgentItem
+type SlideItem = MarkdownItem | DiagramItem | ConfigurableAgentItem | SvgItem
 ```
 
 ---
@@ -146,6 +146,36 @@ type LineType = 'straight' | 'polyline' | 'curve'
     { from: 'tools', to: 'llm' },
     { from: 'llm', to: 'output' },
   ]
+}
+```
+
+---
+
+## SvgItem
+
+纯 SVG 图像展示，用于嵌入 SVG 代码。
+
+```typescript
+interface SvgItem {
+  type: 'svg'
+  content: string  // SVG 字符串，如 '<svg>...</svg>'
+}
+```
+
+### content 格式
+
+- 必须是完整的 SVG 字符串
+- 以 `<svg>` 开头，`</svg>` 结尾
+- 支持内联样式和属性
+
+### 示例
+
+```typescript
+{
+  type: 'svg',
+  content: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="40" fill="blue"/>
+  </svg>`
 }
 ```
 

@@ -50,7 +50,12 @@ export interface ConfigurableAgentItem {
   agentType?: 'qa' | 'tool' | 'langchain'  // 可选：连接真实后端
 }
 
-export type SlideItem = MarkdownItem | DiagramItem | ConfigurableAgentItem
+export interface SvgItem {
+  type: 'svg'
+  content: string  // SVG 字符串，如 '<svg>...</svg>'
+}
+
+export type SlideItem = MarkdownItem | DiagramItem | ConfigurableAgentItem | SvgItem
 
 export interface SlideContent {
   title?: string  // 可选：幻灯片标题

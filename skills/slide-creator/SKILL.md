@@ -41,6 +41,7 @@ description: |
    - `markdown` - 文本、公式、代码
    - `diagram` - 静态架构图
    - `configurable-agent` - 可交互 Agent 演示
+   - `svg` - 纯 SVG 图像
 
 4. **收集内容**
    - 根据选择的内容类型收集必要信息
@@ -88,7 +89,7 @@ description: |
 ### 文件位置
 ```
 src/slides/
-├── chapter1/
+├── example/
 │   ├── 01-what-is-agent.ts
 │   ├── 02-architecture.ts
 │   └── ...
@@ -162,6 +163,17 @@ interface SlideContent {
 
 详细配置见 `references/agent-config-guide.md`
 
+### SVG Item
+适合：纯 SVG 图像展示
+```typescript
+{
+  type: 'svg',
+  content: `<svg viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="40" fill="blue"/>
+  </svg>`
+}
+```
+
 ## 更新 index.ts
 
 生成 slide 后必须更新 `src/slides/index.ts`：
@@ -171,8 +183,8 @@ export const courseConfig = {
   title: 'AI Agent 入门教程',
   chapters: [
     {
-      id: 'chapter1',
-      title: '第一章：Agent 基础',
+      id: 'example',
+      title: '示例章节',
       slides: [
         { id: '01-what-is-agent', title: '什么是 Agent' },
         // 新增的 slides...
