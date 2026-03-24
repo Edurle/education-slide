@@ -20,7 +20,7 @@ const md = new MarkdownIt({
         // fallback to default
       }
     }
-    return `<pre class="hljs"><code>${MarkdownIt.prototype.utils.escapeHtml(str)}</code></pre>`
+    return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`
   },
 })
 

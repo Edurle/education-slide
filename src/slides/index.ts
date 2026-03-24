@@ -11,17 +11,27 @@ export const courseConfig = {
   title: 'AI Agent 入门教程',
   chapters: [
     {
-      id: 'example',
-      title: '示例章节',
+      id: 'chapter1-llm-basics',
+      title: '第一章：大模型基础',
       slides: [
-        { id: '01-what-is-agent', title: '什么是 Agent' },
-        { id: '02-architecture', title: 'Agent 架构' },
-        { id: '03-agent-demo', title: 'Agent 演示' },
-        { id: '04-langchain-agent-demo', title: 'LangChain Agent 演示' },
-        { id: '04-features', title: 'Agent 特性' },
-        { id: '05-status-test', title: 'Diagram 状态测试' },
-        { id: '06-custom-agent', title: '多工具 Agent 架构' },
-        { id: '07-svg-test', title: 'SVG 渲染测试' },
+        { id: '01-intro-questions', title: '引入：大模型的局限性' },
+        { id: '02-llm-essence', title: '大模型的本质' },
+        { id: '03-context-engineering', title: '上下文工程' },
+        { id: '04-single-call', title: '单次模型调用' },
+        { id: '05-multi-turn-memory', title: '多轮对话与记忆' },
+        { id: '06-memory-demo', title: '记忆能力演示' },
+      ]
+    },
+    {
+      id: 'chapter2-agent-basics',
+      title: '第二章：智能体基础',
+      slides: [
+        { id: '01-llm-vs-agent', title: '大模型 vs 智能体' },
+        { id: '02-perception', title: '智能体如何感知世界' },
+        { id: '03-think-act-loop', title: '思考-行动循环' },
+        { id: '04-task-completion', title: '任务结束判定' },
+        { id: '05-tool-calling', title: '工具调用演示' },
+        { id: '06-mcp', title: 'MCP 协议' },
       ]
     }
   ]
