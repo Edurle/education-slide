@@ -65,8 +65,12 @@ function getSlideIndex(chapterId: string, slideId: string): number {
         v-for="(slide, index) in slides"
         :key="`${slide.chapterId}-${slide.slideId}`"
         class="slide-section"
+        :class="{ 'slide-hero': slide.content.items?.some(item => item.type === 'hero') }"
       >
-        <div class="slide-header">
+        <div
+          v-if="!slide.content.items?.some(item => item.type === 'hero')"
+          class="slide-header"
+        >
           <span class="slide-number">{{ index + 1 }}</span>
           <h2 v-if="slide.content.title" class="slide-title">{{ slide.content.title }}</h2>
         </div>
@@ -91,15 +95,16 @@ function getSlideIndex(chapterId: string, slideId: string): number {
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  border-bottom: 2px solid #42b883;
+  background: rgba(10, 10, 26, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(66, 184, 131, 0.2);
 }
 
 .fixed-header h1 {
   color: #42b883;
   margin: 0;
   font-size: 1.2rem;
+  letter-spacing: 1px;
 }
 
 /* 目录切换按钮 */
@@ -109,24 +114,26 @@ function getSlideIndex(chapterId: string, slideId: string): number {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #42b883;
-  color: white;
-  border: none;
+  background: rgba(66, 184, 131, 0.15);
+  color: #42b883;
+  border: 1px solid rgba(66, 184, 131, 0.3);
   cursor: pointer;
   font-size: 1.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .toc-toggle:hover {
-  background: #35a070;
+  background: rgba(66, 184, 131, 0.25);
+  border-color: #42b883;
 }
 
 .toc-toggle.active {
-  background: #2c3e50;
+  background: #42b883;
+  color: white;
+  border-color: #42b883;
 }
 
 /* 目录侧边栏 */
@@ -137,9 +144,9 @@ function getSlideIndex(chapterId: string, slideId: string): number {
   width: 260px;
   height: calc(100vh - 90px);
   max-height: calc(100vh - 90px);
-  background: white;
-  border-left: 1px solid #e0e0e0;
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  background: rgba(14, 14, 30, 0.98);
+  border-left: 1px solid rgba(66, 184, 131, 0.15);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
   transition: right 0.3s ease;
   z-index: 150;
   overflow-y: auto;
@@ -163,13 +170,13 @@ function getSlideIndex(chapterId: string, slideId: string): number {
   color: #42b883;
   padding: 0.5rem;
   font-size: 0.9rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid rgba(66, 184, 131, 0.15);
 }
 
 .toc-slide-item {
   display: block;
   padding: 0.5rem 0.75rem 0.5rem 1.5rem;
-  color: #666;
+  color: rgba(255, 255, 255, 0.55);
   cursor: pointer;
   font-size: 0.85rem;
   transition: all 0.2s;
@@ -177,8 +184,9 @@ function getSlideIndex(chapterId: string, slideId: string): number {
 }
 
 .toc-slide-item:hover {
-  background: rgba(66, 184, 131, 0.1);
+  background: rgba(66, 184, 131, 0.08);
   border-left-color: #42b883;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* 滚动内容区 */
@@ -189,7 +197,13 @@ function getSlideIndex(chapterId: string, slideId: string): number {
 /* 幻灯片区块 */
 .slide-section {
   padding: 2rem 1rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* 封面页全屏沉浸 */
+.slide-section.slide-hero {
+  padding: 0;
+  border-bottom: none;
 }
 
 /* 幻灯片标题 */
@@ -206,15 +220,16 @@ function getSlideIndex(chapterId: string, slideId: string): number {
   justify-content: center;
   width: 32px;
   height: 32px;
-  background: #42b883;
-  color: white;
+  background: rgba(66, 184, 131, 0.15);
+  color: #42b883;
+  border: 1px solid rgba(66, 184, 131, 0.3);
   border-radius: 50%;
   font-weight: bold;
   font-size: 0.9rem;
 }
 
 .slide-title {
-  color: #333;
+  color: rgba(255, 255, 255, 0.85);
   font-weight: bold;
   font-size: 1.1rem;
   margin: 0;

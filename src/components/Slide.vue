@@ -4,6 +4,8 @@ import MarkdownRenderer from './MarkdownRenderer.vue'
 import Diagram from './Diagram.vue'
 import ConfigurableAgent from './ConfigurableAgent.vue'
 import SvgRenderer from './SvgRenderer.vue'
+import TableRenderer from './TableRenderer.vue'
+import HeroSlide from './HeroSlide.vue'
 
 defineProps<{
   content: SlideContent
@@ -37,6 +39,19 @@ defineProps<{
           :content="content.items[0].content"
           class="slide-item"
         />
+        <TableRenderer
+          v-else-if="content.items[0].type === 'table'"
+          :headers="content.items[0].headers"
+          :rows="content.items[0].rows"
+          :variant="content.items[0].variant"
+          :theme="content.items[0].theme"
+          class="slide-item"
+        />
+        <HeroSlide
+          v-else-if="content.items[0].type === 'hero'"
+          :config="content.items[0].config"
+          class="slide-item"
+        />
       </div>
       <div class="split-right">
         <template v-for="(item, index) in content.items.slice(1)" :key="index">
@@ -60,6 +75,14 @@ defineProps<{
           <SvgRenderer
             v-else-if="item.type === 'svg'"
             :content="item.content"
+            class="slide-item"
+          />
+          <TableRenderer
+            v-else-if="item.type === 'table'"
+            :headers="item.headers"
+            :rows="item.rows"
+            :variant="item.variant"
+            :theme="item.theme"
             class="slide-item"
           />
         </template>
@@ -91,6 +114,19 @@ defineProps<{
           :content="item.content"
           class="slide-item"
         />
+        <TableRenderer
+          v-else-if="item.type === 'table'"
+          :headers="item.headers"
+          :rows="item.rows"
+          :variant="item.variant"
+          :theme="item.theme"
+          class="slide-item"
+        />
+        <HeroSlide
+          v-else-if="item.type === 'hero'"
+          :config="item.config"
+          class="slide-item"
+        />
       </template>
     </template>
   </div>
@@ -101,6 +137,7 @@ defineProps<{
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* 垂直布局 */

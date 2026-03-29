@@ -16,8 +16,9 @@ export const courseConfig = {
       slides: [
         { id: '01-intro-questions', title: '引入：大模型的局限性' },
         { id: '02-llm-essence', title: '大模型的本质' },
-        { id: '03-context-engineering', title: '上下文工程' },
         { id: '04-single-call', title: '单次模型调用' },
+        { id: '02b-essence-to-context', title: '从本质到上下文' },
+        { id: '03-context-engineering', title: '上下文工程' },
         { id: '05-multi-turn-memory', title: '多轮对话与记忆' },
         { id: '06-memory-demo', title: '记忆能力演示' },
       ]

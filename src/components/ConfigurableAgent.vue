@@ -170,10 +170,11 @@ async function runPresetDemo(steps: AgentExecutionStep[]) {
 
 <style scoped>
 .configurable-agent {
-  border: 2px solid #9c27b0;
+  border: 1px solid rgba(66, 184, 131, 0.2);
   border-radius: 12px;
   padding: 1.5rem;
-  background: linear-gradient(to bottom, #fafafa, #f0f0f0);
+  background: #141428;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .agent-header {
@@ -185,20 +186,22 @@ async function runPresetDemo(steps: AgentExecutionStep[]) {
 
 .agent-header h3 {
   margin: 0;
-  color: #2c3e50;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .status-badge {
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-size: 0.85rem;
-  background: #e8ecf0;
-  color: #6b7280;
+  background: rgba(66, 184, 131, 0.1);
+  color: #42b883;
+  border: 1px solid rgba(66, 184, 131, 0.2);
 }
 
 .status-badge.running {
-  background: #fff3cd;
-  color: #856404;
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  border-color: rgba(255, 193, 7, 0.3);
   animation: pulse 1.5s infinite;
 }
 
@@ -216,19 +219,26 @@ async function runPresetDemo(steps: AgentExecutionStep[]) {
 .agent-controls input {
   flex: 1;
   padding: 0.5rem 1rem;
-  border: 2px solid #ddd;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 6px;
   font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.85);
   transition: border-color 0.2s;
+}
+
+.agent-controls input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
 }
 
 .agent-controls input:focus {
   outline: none;
-  border-color: #9c27b0;
+  border-color: #42b883;
 }
 
 .agent-controls input:disabled {
-  background: #f5f5f5;
+  background: rgba(255, 255, 255, 0.03);
+  opacity: 0.5;
 }
 
 .agent-controls button {
@@ -237,26 +247,28 @@ async function runPresetDemo(steps: AgentExecutionStep[]) {
   border-radius: 6px;
   font-size: 0.95rem;
   cursor: pointer;
-  background: #9c27b0;
+  background: #42b883;
   color: white;
   transition: background 0.2s;
 }
 
 .agent-controls button:hover:not(:disabled) {
-  background: #7b1fa2;
+  background: #35a070;
 }
 
 .agent-controls button:disabled {
-  background: #ccc;
+  background: rgba(66, 184, 131, 0.3);
   cursor: not-allowed;
 }
 
 .agent-controls .reset-btn {
-  background: #6b7280;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .agent-controls .reset-btn:hover:not(:disabled) {
-  background: #4b5563;
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .agent-diagram {
@@ -267,57 +279,60 @@ async function runPresetDemo(steps: AgentExecutionStep[]) {
 
 .agent-status {
   padding: 0.75rem;
-  background: #fff3cd;
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.2);
   border-radius: 6px;
   margin-bottom: 0.5rem;
 }
 
 .status-label {
   font-size: 0.85rem;
-  color: #856404;
+  color: #ffc107;
   font-weight: bold;
 }
 
 .status-value {
   font-size: 0.95rem;
-  color: #333;
+  color: rgba(255, 255, 255, 0.8);
   margin-top: 0.25rem;
 }
 
 .agent-result {
   padding: 0.75rem;
-  background: #d4edda;
+  background: rgba(66, 184, 131, 0.1);
+  border: 1px solid rgba(66, 184, 131, 0.2);
   border-radius: 6px;
 }
 
 .result-label {
   font-size: 0.85rem;
-  color: #155724;
+  color: #42b883;
   font-weight: bold;
 }
 
 .result-content {
   font-size: 0.95rem;
-  color: #333;
+  color: rgba(255, 255, 255, 0.8);
   margin-top: 0.25rem;
   white-space: pre-wrap;
 }
 
 .agent-error {
   padding: 0.75rem;
-  background: #f8d7da;
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.2);
   border-radius: 6px;
 }
 
 .error-label {
   font-size: 0.85rem;
-  color: #721c24;
+  color: #ff6b7a;
   font-weight: bold;
 }
 
 .error-content {
   font-size: 0.95rem;
-  color: #333;
+  color: rgba(255, 255, 255, 0.8);
   margin-top: 0.25rem;
 }
 </style>

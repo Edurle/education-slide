@@ -29,9 +29,9 @@ while not task_complete:
     {
       type: 'diagram',
       nodes: [
-        { id: 'think', label: 'Think\n思考', x: 50, y: 15, status: 'idle' },
-        { id: 'act', label: 'Act\n行动', x: 85, y: 50, status: 'idle' },
-        { id: 'observe', label: 'Observe\n观察', x: 50, y: 85, status: 'idle' },
+        { id: 'think', label: 'Think\n思考', x: 50, y: 10, status: 'idle' },
+        { id: 'act', label: 'Act\n行动', x: 78, y: 50, status: 'idle' },
+        { id: 'observe', label: 'Observe\n观察', x: 50, y: 78, status: 'idle' },
         { id: 'llm', label: 'LLM', x: 15, y: 50, status: 'idle' },
       ],
       edges: [

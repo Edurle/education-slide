@@ -55,7 +55,32 @@ export interface SvgItem {
   content: string  // SVG 字符串，如 '<svg>...</svg>'
 }
 
-export type SlideItem = MarkdownItem | DiagramItem | ConfigurableAgentItem | SvgItem
+export interface TableItem {
+  type: 'table'
+  headers: string[]
+  rows: string[][]
+  variant?: 'default' | 'striped' | 'bordered' | 'minimal'
+  theme?: 'light' | 'dark'
+}
+
+export interface HeroChapter {
+  id: string
+  label: string
+  title: string
+}
+
+export interface HeroItem {
+  type: 'hero'
+  config: {
+    subtitle: string
+    orbIcon?: string
+    title: string
+    tagline: string
+    chapters: HeroChapter[]
+  }
+}
+
+export type SlideItem = MarkdownItem | DiagramItem | ConfigurableAgentItem | SvgItem | TableItem | HeroItem
 
 export interface SlideContent {
   title?: string  // 可选：幻灯片标题

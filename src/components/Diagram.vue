@@ -21,9 +21,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Default colors
 const defaultColors = {
-  idle: { bg: '#e8ecf0', border: '#b0b8c0' },
-  running: { bg: '#fff3cd', border: '#ffc107' },
-  done: { bg: '#d4edda', border: '#28a745' }
+  idle: { bg: '#1e1e3e', border: '#4a4a6c' },
+  running: { bg: '#2e2a1a', border: '#ffc107' },
+  done: { bg: '#1a3e2a', border: '#42b883' }
 }
 
 const colors = computed(() => ({
@@ -102,10 +102,13 @@ function initNodeStates() {
 }
 
 // Calculate actual pixel positions from percentage
+// Clamps positions so nodes never overflow container
 function getNodePosition(node: DiagramNode) {
+  const maxX = Math.max(0, containerWidth.value - props.nodeSize.width)
+  const maxY = Math.max(0, containerHeight.value - props.nodeSize.height)
   return {
-    x: (node.x / 100) * containerWidth.value,
-    y: (node.y / 100) * containerHeight.value
+    x: Math.min((node.x / 100) * containerWidth.value, maxX),
+    y: Math.min((node.y / 100) * containerHeight.value, maxY)
   }
 }
 
@@ -266,7 +269,7 @@ function stopArrowFlowAnimation(edgeId: string) {
 function updateContainerSize() {
   if (containerRef.value) {
     containerWidth.value = containerRef.value.clientWidth
-    containerHeight.value = Math.max(containerRef.value.clientHeight, 300)
+    containerHeight.value = Math.max(containerRef.value.clientHeight, 350)
   }
 }
 
@@ -367,7 +370,7 @@ defineExpose({
           refY="3.5"
           orient="auto"
         >
-          <polygon points="0 0, 10 3.5, 0 7" fill="#6b7280" />
+          <polygon points="0 0, 10 3.5, 0 7" fill="#ffffff" />
         </marker>
         <!-- Running arrow marker -->
         <marker
@@ -391,7 +394,7 @@ defineExpose({
             :data-edge-id="item.id"
             :d="`M ${item.points!.x1} ${item.points!.y1} Q ${item.points!.ctrlX} ${item.points!.ctrlY} ${item.points!.x2} ${item.points!.y2}`"
             fill="none"
-            stroke="#6b7280"
+            stroke="#ffffff"
             stroke-width="2"
             marker-end="url(#arrowhead)"
           />
@@ -403,7 +406,7 @@ defineExpose({
             :y1="item.points!.y1"
             :x2="item.points!.x2"
             :y2="item.points!.y2"
-            stroke="#6b7280"
+            stroke="#ffffff"
             stroke-width="2"
             marker-end="url(#arrowhead)"
           />
@@ -413,7 +416,7 @@ defineExpose({
             :x="item.points!.ctrlX || (item.points!.x1 + item.points!.x2) / 2"
             :y="(item.points!.ctrlY || (item.points!.y1 + item.points!.y2) / 2) - 12"
             font-size="11"
-            fill="#6b7280"
+            fill="#ffffff"
             text-anchor="middle"
           >
             {{ item.edge.label }}
@@ -452,17 +455,16 @@ defineExpose({
             rx="8"
             ry="8"
           />
-          <text
-            :data-text-id="id"
-            :x="getNodePosition(node).x + nodeSize.width / 2"
-            :y="getNodePosition(node).y + nodeSize.height / 2"
-            font-size="14"
-            text-anchor="middle"
-            dominant-baseline="middle"
-            fill="#374151"
+          <foreignObject
+            :x="getNodePosition(node).x + 2"
+            :y="getNodePosition(node).y + 2"
+            :width="nodeSize.width - 4"
+            :height="nodeSize.height - 4"
           >
-            {{ node.label }}
-          </text>
+            <div class="node-label" :data-text-id="id">
+              {{ node.label }}
+            </div>
+          </foreignObject>
         </template>
       </g>
     </svg>
@@ -472,13 +474,30 @@ defineExpose({
 <style scoped>
 .diagram-container {
   width: 100%;
-  min-height: 300px;
-  background: #fafafa;
+  min-height: 350px;
+  background: #141428;
   border-radius: 8px;
+  border: 1px solid rgba(66, 184, 131, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
 
 svg {
   display: block;
+}
+
+.node-label {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.3;
+  color: #ffffff;
+  overflow: hidden;
+  word-break: break-all;
+  white-space: pre-line;
 }
 </style>

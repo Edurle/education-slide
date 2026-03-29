@@ -1,30 +1,20 @@
 import type { SlideContent } from '@/types'
 
 export default {
-  title: '引入：大模型的局限性',
+  title: '课程封面',
   items: [
     {
-      type: 'markdown',
-      content: `# 引入：回答几个问题
-
-在使用大模型之前，先思考这些问题：
-
----
-
-1. **为什么大模型会编造不存在的事实？**
-
----
-
-2. **为什么大模型无法仅靠自身实现精确的数值计算？**
-
----
-
-3. **为什么大模型无法回答准确的时间？**
-
----
-
-4. **应该如何解决这些问题？**
-`,
+      type: 'hero',
+      config: {
+        subtitle: 'AI AGENT 入门教程',
+        orbIcon: '🤖',
+        title: '从大模型到智能体',
+        tagline: '探索 AI 的感知、思考与行动',
+        chapters: [
+          { id: '01', label: 'CHAPTER 01', title: '大模型基础' },
+          { id: '02', label: 'CHAPTER 02', title: '智能体基础' },
+        ],
+      },
     },
   ],
 } satisfies SlideContent

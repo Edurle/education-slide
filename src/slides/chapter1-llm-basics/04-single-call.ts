@@ -29,9 +29,9 @@ llm.invoke("你好，告诉我今天的日期")
     {
       type: 'diagram',
       nodes: [
-        { id: 'prompt', label: 'Prompt', x: 10, y: 40, status: 'idle' },
-        { id: 'llm', label: 'LLM', x: 50, y: 40, status: 'idle' },
-        { id: 'output', label: 'Output', x: 85, y: 40, status: 'idle' },
+        { id: 'prompt', label: 'Prompt', x: 5, y: 40, status: 'idle' },
+        { id: 'llm', label: 'LLM', x: 45, y: 40, status: 'idle' },
+        { id: 'output', label: 'Output', x: 80, y: 40, status: 'idle' },
       ],
       edges: [
         { from: 'prompt', to: 'llm', label: '文本' },

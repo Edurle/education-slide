@@ -14,13 +14,13 @@ const DEFAULT_LABELS: Record<AgentComponentType, string> = {
 
 /** 组件类型到颜色的映射 */
 export const COMPONENT_COLORS: Record<AgentComponentType, { bg: string; border: string }> = {
-  input: { bg: '#e3f2fd', border: '#2196f3' },
-  output: { bg: '#e8f5e9', border: '#4caf50' },
-  llm: { bg: '#fff3e0', border: '#ff9800' },
-  tool: { bg: '#fce4ec', border: '#e91e63' },
-  router: { bg: '#f3e5f5', border: '#9c27b0' },
-  memory: { bg: '#e0f7fa', border: '#00bcd4' },
-  custom: { bg: '#f5f5f5', border: '#9e9e9e' }
+  input: { bg: '#1a2a3e', border: '#42b883' },
+  output: { bg: '#1a2e2a', border: '#42b883' },
+  llm: { bg: '#2a2a1e', border: '#ffc107' },
+  tool: { bg: '#2e1a2a', border: '#e91e63' },
+  router: { bg: '#1e2a3e', border: '#42b883' },
+  memory: { bg: '#1a2e2e', border: '#00bcd4' },
+  custom: { bg: '#1e1e3e', border: '#9e9e9e' }
 }
 
 /**
@@ -34,12 +34,12 @@ function calculateHorizontalLayout(
 
   if (n === 0) return positions
 
-  // 计算间距，使组件均匀分布在 10-90% 范围内
-  const spacing = n === 1 ? 0 : 80 / (n - 1)
+  // 计算间距，使组件均匀分布在 5-75% 范围内（留出节点宽度空间）
+  const spacing = n === 1 ? 0 : 70 / (n - 1)
 
   components.forEach((comp, index) => {
     positions.set(comp.id, {
-      x: 10 + (n === 1 ? 40 : index * spacing),
+      x: 5 + (n === 1 ? 35 : index * spacing),
       y: 50
     })
   })
@@ -103,12 +103,12 @@ function calculateCenterLayout(
     })
   }
 
-  // 右侧列：竖向均匀分布 (20%-80%)
+  // 右侧列：竖向均匀分布 (20%-75%)
   if (rightComponents.length > 0) {
-    const ySpacing = rightComponents.length === 1 ? 0 : 60 / (rightComponents.length - 1)
+    const ySpacing = rightComponents.length === 1 ? 0 : 55 / (rightComponents.length - 1)
     rightComponents.forEach((comp, i) => {
       positions.set(comp.id, {
-        x: 80,
+        x: 78,
         y: 20 + (rightComponents.length === 1 ? 30 : i * ySpacing)
       })
     })
@@ -151,7 +151,7 @@ function calculateTreeLayout(
 
   // Output 在右侧中间
   if (outputIdx >= 0) {
-    positions.set(components[outputIdx].id, { x: 85, y: 50 })
+    positions.set(components[outputIdx].id, { x: 75, y: 50 })
   }
 
   // 中间组件均匀分布

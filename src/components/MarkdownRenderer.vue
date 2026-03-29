@@ -39,6 +39,7 @@ const renderedHtml = computed(() => md.render(props.content))
 <style>
 .markdown-body {
   line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .markdown-body h1,
@@ -53,11 +54,56 @@ const renderedHtml = computed(() => md.render(props.content))
   margin: 1em 0;
 }
 
+.markdown-body strong {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.markdown-body a {
+  color: #42b883;
+}
+
+.markdown-body code {
+  background: rgba(66, 184, 131, 0.1);
+  color: #42b883;
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.markdown-body pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+}
+
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 1.5em 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 1.5em;
+}
+
+.markdown-body li {
+  margin: 0.3em 0;
+}
+
+.markdown-body blockquote {
+  border-left: 3px solid rgba(66, 184, 131, 0.3);
+  padding-left: 1em;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 1em 0;
+}
+
 /* Highlight.js theme - GitHub Dark */
 .hljs {
-  background: #0d1117;
+  background: #161625;
   padding: 1em;
-  border-radius: 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   overflow-x: auto;
 }
 
