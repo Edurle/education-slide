@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import Diagram from './Diagram.vue'
 import { runAgent } from '@/api/agent'
 import { convertToNodes, convertToEdges } from '@/utils/agentConfigConverter'
@@ -23,13 +23,26 @@ const currentAction = ref('')
 const result = ref('')
 const error = ref('')
 
+// 对话历史
+const messages = ref<{ role: 'user' | 'ai', content: string }[]>([])
+const messagesBody = ref<HTMLElement | null>(null)
+
 // Watch config changes
 watch(() => props.config, (newConfig) => {
   nodes.value = convertToNodes(newConfig)
   userInput.value = newConfig.defaultInput || ''
 }, { deep: true })
 
-// 重置图表
+// 自动滚动到底部
+watch(messages, () => {
+  nextTick(() => {
+    if (messagesBody.value) {
+      messagesBody.value.scrollTop = messagesBody.value.scrollHeight
+    }
+  })
+}, { deep: true })
+
+// 重置图表节点（不清理消息）
 function resetDiagram() {
   nodes.value.forEach(node => {
     node.status = 'idle'
@@ -37,9 +50,21 @@ function resetDiagram() {
   diagramRef.value?.reset()
 }
 
+// 完全重置（图表 + 消息 + 状态）
+function fullReset() {
+  resetDiagram()
+  messages.value = []
+  result.value = ''
+  currentAction.value = ''
+  error.value = ''
+}
+
 // 执行 Agent（两种模式）
 async function executeAgent() {
   if (isRunning.value || !userInput.value.trim()) return
+
+  // 记录用户消息
+  messages.value.push({ role: 'user', content: userInput.value })
 
   isRunning.value = true
   currentAction.value = ''
@@ -74,6 +99,7 @@ async function executeAgent() {
       },
       onResult: (res: string) => {
         result.value = res
+        messages.value.push({ role: 'ai', content: res })
       },
       onError: (err: string) => {
         error.value = err
@@ -119,6 +145,7 @@ async function runPresetDemo(steps: AgentExecutionStep[]) {
   isRunning.value = false
   currentAction.value = '完成'
   result.value = '演示完成'
+  messages.value.push({ role: 'ai', content: '演示完成' })
 }
 </script>
 
@@ -142,7 +169,7 @@ async function runPresetDemo(steps: AgentExecutionStep[]) {
       <button @click="executeAgent" :disabled="isRunning || !userInput.trim()">
         {{ isRunning ? '运行中' : '执行' }}
       </button>
-      <button @click="resetDiagram" :disabled="isRunning" class="reset-btn">
+      <button @click="fullReset" :disabled="isRunning" class="reset-btn">
         重置
       </button>
     </div>
@@ -156,9 +183,23 @@ async function runPresetDemo(steps: AgentExecutionStep[]) {
       <div class="status-value">{{ currentAction }}</div>
     </div>
 
-    <div class="agent-result" v-if="result">
-      <div class="result-label">结果:</div>
-      <div class="result-content">{{ result }}</div>
+    <!-- 真实对话历史 -->
+    <div class="agent-messages" v-if="messages.length > 0">
+      <div class="messages-header">
+        <span class="messages-title">Context Window</span>
+        <span class="messages-count">{{ messages.length }} 条消息</span>
+      </div>
+      <div class="messages-body" ref="messagesBody">
+        <div
+          v-for="(msg, i) in messages"
+          :key="i"
+          class="message"
+          :class="[`msg-${msg.role}`, { 'msg-latest': i === messages.length - 1 }]"
+        >
+          <span class="msg-role">{{ msg.role === 'user' ? 'User' : 'AI' }}</span>
+          <span class="msg-text">{{ msg.content }}</span>
+        </div>
+      </div>
     </div>
 
     <div class="agent-error" v-if="error">
@@ -297,24 +338,93 @@ async function runPresetDemo(steps: AgentExecutionStep[]) {
   margin-top: 0.25rem;
 }
 
-.agent-result {
-  padding: 0.75rem;
-  background: rgba(66, 184, 131, 0.1);
-  border: 1px solid rgba(66, 184, 131, 0.2);
-  border-radius: 6px;
+/* ===== 对话历史 ===== */
+.agent-messages {
+  margin-top: 0.5rem;
+  border: 1px solid rgba(66, 184, 131, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.result-label {
-  font-size: 0.85rem;
+.messages-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: rgba(66, 184, 131, 0.06);
+  border-bottom: 1px solid rgba(66, 184, 131, 0.1);
+}
+
+.messages-title {
+  font-size: 0.8rem;
   color: #42b883;
   font-weight: bold;
+  letter-spacing: 0.5px;
 }
 
-.result-content {
-  font-size: 0.95rem;
+.messages-count {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.messages-body {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.messages-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.messages-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages-body::-webkit-scrollbar-thumb {
+  background: rgba(66, 184, 131, 0.2);
+  border-radius: 2px;
+}
+
+.message {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  margin-bottom: 0.2rem;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+}
+
+.msg-user {
+  border-left-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.04);
+}
+
+.msg-ai {
+  border-left-color: #42b883;
+  background: rgba(66, 184, 131, 0.04);
+}
+
+.msg-latest {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.msg-role {
+  font-weight: 700;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  min-width: 32px;
+}
+
+.msg-user .msg-role { color: #3b82f6; }
+.msg-ai .msg-role { color: #42b883; }
+
+.msg-text {
   color: rgba(255, 255, 255, 0.8);
-  margin-top: 0.25rem;
-  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .agent-error {

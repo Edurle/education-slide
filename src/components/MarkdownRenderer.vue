@@ -151,6 +151,42 @@ const renderedHtml = computed(() => md.render(props.content))
   color: #ffa657;
 }
 
+/* Table styles */
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.8em 0;
+  font-size: 0.92em;
+}
+
+.markdown-body thead {
+  background: rgba(66, 184, 131, 0.08);
+}
+
+.markdown-body th {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+  color: #42b883;
+  border-bottom: 2px solid rgba(66, 184, 131, 0.25);
+}
+
+.markdown-body td {
+  padding: 0.5rem 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.markdown-body tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.markdown-body tbody tr:hover {
+  background: rgba(66, 184, 131, 0.06);
+}
+
 /* KaTeX styles */
 .katex {
   font-size: 1.1em;

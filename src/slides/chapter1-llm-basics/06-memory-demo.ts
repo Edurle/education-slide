@@ -7,17 +7,18 @@ export default {
       type: 'markdown',
       content: `# 记忆能力演示
 
-下面是一个具有记忆能力的对话演示。尝试在多轮对话中提及你的名字或偏好，然后询问模型是否能记住。
-`,
+下面演示多轮对话中，模型如何通过历史消息实现"记忆"。试试告诉模型你的名字，然后问它是否记得。
+
+> 下方的 **Context Window** 会实时记录你与模型的每一轮对话 — 这就是每次调用时发送给模型的完整历史。`,
     },
     {
       type: 'configurable-agent',
       config: {
         name: '记忆对话 Agent',
-        layout: 'center',
+        layout: 'horizontal',
         components: [
           { id: 'input', type: 'input', label: '用户输入' },
-          { id: 'memory', type: 'tool', label: '记忆' },
+          { id: 'memory', type: 'memory', label: '记忆' },
           { id: 'llm', type: 'llm', label: 'LLM' },
           { id: 'output', type: 'output', label: '回复' },
         ],

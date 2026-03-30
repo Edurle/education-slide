@@ -8,12 +8,6 @@ export default {
       type: 'markdown',
       content: `# 大模型如何实现多轮对话？
 
-## 关键洞察
-
-**模型自身不带记忆！**
-
-为了实现多轮对话，需要存储每次的会话历史，并在每次调用时传递给模型。
-
 ## 消息格式
 
 \`\`\`python
@@ -140,9 +134,9 @@ llm.invoke(messages)
   <rect x="405" y="333" width="170" height="38" rx="6" fill="#1a2e1a" stroke="#42b883" stroke-width="1.5"/>
   <text x="417" y="357" fill="#ffffff" font-size="12">🤖 不客气，李明！</text>
 
-  <!-- ===== KEY INSIGHT ===== -->
-  <rect x="10" y="438" width="560" height="16" rx="4" fill="rgba(66,184,131,0.08)"/>
-  <text x="290" y="450" fill="#42b883" font-size="11" text-anchor="middle" font-weight="bold">⚡ 模型自身不带记忆 — 每次调用都需要发送完整的对话历史</text>
+  <!-- ===== KEY INSIGHT — dramatic reveal ===== -->
+  <rect x="10" y="432" width="560" height="24" rx="4" fill="rgba(66,184,131,0.1)" stroke="#42b883" stroke-width="1.5"/>
+  <text x="290" y="449" fill="#42b883" font-size="13" text-anchor="middle" font-weight="bold">模型没有记忆 · 每次调用都从零开始 · 你必须把完整历史重新喂给它</text>
 </svg>`,
     },
   ],

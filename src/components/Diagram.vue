@@ -91,7 +91,7 @@ const svgRef = ref<SVGSVGElement | null>(null)
 
 // Container dimensions
 const containerWidth = ref(800)
-const containerHeight = ref(400)
+const containerHeight = ref(280)
 
 // Initialize node states
 function initNodeStates() {
@@ -269,7 +269,7 @@ function stopArrowFlowAnimation(edgeId: string) {
 function updateContainerSize() {
   if (containerRef.value) {
     containerWidth.value = containerRef.value.clientWidth
-    containerHeight.value = Math.max(containerRef.value.clientHeight, 350)
+    containerHeight.value = Math.max(containerRef.value.clientHeight, 245)
   }
 }
 
@@ -474,7 +474,7 @@ defineExpose({
 <style scoped>
 .diagram-container {
   width: 100%;
-  min-height: 350px;
+  min-height: 245px;
   background: #141428;
   border-radius: 8px;
   border: 1px solid rgba(66, 184, 131, 0.15);
