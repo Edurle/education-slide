@@ -20,7 +20,6 @@ export const courseConfig = {
         { id: '02b-essence-to-context', title: '从本质到上下文' },
         { id: '03-context-engineering', title: '上下文工程' },
         { id: '05-multi-turn-memory', title: '多轮对话与记忆' },
-        { id: '06-memory-demo', title: '记忆能力演示' },
       ]
     },
     {
