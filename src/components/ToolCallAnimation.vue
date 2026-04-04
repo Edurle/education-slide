@@ -4,29 +4,27 @@ import { ref, computed } from 'vue'
 const currentStep = ref(0)
 const actionText = ref('点击"开始演示"查看工具调用流程')
 
-// Node positions
+// Node positions — single LLM in center
 const nodes = {
   input: { x: 100, y: 120, label: '用户提问', type: 'input' },
-  llm1: { x: 400, y: 120, label: 'LLM', type: 'llm' },
+  llm: { x: 400, y: 120, label: 'LLM', type: 'llm' },
   tool: { x: 700, y: 120, label: '天气工具', type: 'tool' },
-  llm2: { x: 400, y: 320, label: 'LLM', type: 'llm' },
-  output: { x: 100, y: 320, label: '最终回答', type: 'output' }
+  output: { x: 400, y: 340, label: '最终回答', type: 'output' }
 }
 
 // Edge definitions
 const edges = [
-  { id: 'input-llm1', from: 'input', to: 'llm1', label: '' },
-  { id: 'llm1-tool', from: 'llm1', to: 'tool', label: '' },
-  { id: 'tool-llm2', from: 'tool', to: 'llm2', label: '' },
-  { id: 'llm2-output', from: 'llm2', to: 'output', label: '' }
+  { id: 'input-llm', from: 'input', to: 'llm' },
+  { id: 'llm-tool', from: 'llm', to: 'tool' },
+  { id: 'tool-llm', from: 'tool', to: 'llm' },
+  { id: 'llm-output', from: 'llm', to: 'output' }
 ]
 
 // Node status
 const nodeStatus = ref<Record<string, 'idle' | 'running' | 'done'>>({
   input: 'idle',
-  llm1: 'idle',
+  llm: 'idle',
   tool: 'idle',
-  llm2: 'idle',
   output: 'idle'
 })
 
@@ -72,13 +70,44 @@ const getEdgePath = (fromId: string, toId: string) => {
 
   if (!from || !to) return ''
 
-  // For horizontal edges
+  // tool→llm: curved return path going below
+  if (fromId === 'tool' && toId === 'llm') {
+    return `M ${from.x} ${from.y + 30} C ${from.x} ${from.y + 120}, ${to.x} ${to.y + 120}, ${to.x} ${to.y + 30}`
+  }
+
+  // Horizontal edges
   if (Math.abs(from.y - to.y) < 50) {
     return `M ${from.x + 60} ${from.y} L ${to.x - 60} ${to.y}`
   }
 
-  // For vertical edges
-  return `M ${from.x} ${from.y + 40} L ${to.x} ${to.y - 40}`
+  // Vertical edges
+  return `M ${from.x} ${from.y + 30} L ${to.x} ${to.y - 30}`
+}
+
+// Get arrow points
+function getArrowPoints(fromId: string, toId: string): string {
+  const from = nodes[fromId as keyof typeof nodes]
+  const to = nodes[toId as keyof typeof nodes]
+  if (!from || !to) return '0,0 0,0 0,0'
+
+  // tool→llm: arrow points up at llm bottom
+  if (fromId === 'tool' && toId === 'llm') {
+    const arrowX = to.x
+    const arrowY = to.y + 30
+    return `${arrowX},${arrowY} ${arrowX - 5},${arrowY + 8} ${arrowX + 5},${arrowY + 8}`
+  }
+
+  // Horizontal edges
+  if (Math.abs(from.y - to.y) < 50) {
+    const arrowX = to.x - 60
+    const arrowY = to.y
+    return `${arrowX},${arrowY} ${arrowX - 8},${arrowY - 5} ${arrowX - 8},${arrowY + 5}`
+  }
+
+  // Vertical edges (top to bottom)
+  const arrowX = to.x
+  const arrowY = to.y - 30
+  return `${arrowX},${arrowY} ${arrowX - 5},${arrowY - 8} ${arrowX + 5},${arrowY - 8}`
 }
 
 // Animation steps
@@ -94,8 +123,8 @@ const animationSteps = [
   async () => {
     // Step 2: LLM generates JSON
     actionText.value = 'LLM 并不直接调用工具，而是输出一段 JSON 指令'
-    nodeStatus.value.llm1 = 'running'
-    activeEdges.value.add('input-llm1')
+    nodeStatus.value.llm = 'running'
+    activeEdges.value.add('input-llm')
     await delay(400)
     showJsonCard.value = true
     await delay(200)
@@ -113,9 +142,9 @@ const animationSteps = [
   async () => {
     // Step 3: Tool execution
     actionText.value = '框架解析 JSON，调用 get_weather 工具'
-    activeEdges.value.delete('input-llm1')
-    activeEdges.value.add('llm1-tool')
-    nodeStatus.value.llm1 = 'done'
+    activeEdges.value.delete('input-llm')
+    activeEdges.value.add('llm-tool')
+    nodeStatus.value.llm = 'done'
     nodeStatus.value.tool = 'running'
     await delay(500)
     showToolResult.value = true
@@ -123,20 +152,20 @@ const animationSteps = [
     await delay(300)
   },
   async () => {
-    // Step 4: Tool result to LLM
+    // Step 4: Tool result returns to LLM
     actionText.value = 'LLM 接收工具返回的结果'
-    activeEdges.value.delete('llm1-tool')
-    activeEdges.value.add('tool-llm2')
-    nodeStatus.value.llm2 = 'running'
+    activeEdges.value.delete('llm-tool')
+    activeEdges.value.add('tool-llm')
+    nodeStatus.value.llm = 'running'
     await delay(500)
-    nodeStatus.value.llm2 = 'done'
+    nodeStatus.value.llm = 'done'
     await delay(300)
   },
   async () => {
     // Step 5: Final answer
     actionText.value = 'LLM 基于工具结果生成自然语言回答'
-    activeEdges.value.delete('tool-llm2')
-    activeEdges.value.add('llm2-output')
+    activeEdges.value.delete('tool-llm')
+    activeEdges.value.add('llm-output')
     await delay(400)
     showFinalAnswer.value = true
     nodeStatus.value.output = 'running'
@@ -147,8 +176,6 @@ const animationSteps = [
 ]
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-
-let animationTimeouts: number[] = []
 
 const startAnimation = async () => {
   resetAnimation()
@@ -161,17 +188,11 @@ const startAnimation = async () => {
 }
 
 const resetAnimation = () => {
-  // Clear any pending timeouts
-  animationTimeouts.forEach(t => clearTimeout(t))
-  animationTimeouts = []
-
-  // Reset all state
   currentStep.value = 0
   nodeStatus.value = {
     input: 'idle',
-    llm1: 'idle',
+    llm: 'idle',
     tool: 'idle',
-    llm2: 'idle',
     output: 'idle'
   }
   activeEdges.value.clear()
@@ -184,36 +205,10 @@ const resetAnimation = () => {
 }
 
 // Computed for LLM spinning gear
-const llm1Running = computed(() => nodeStatus.value.llm1 === 'running')
-const llm2Running = computed(() => nodeStatus.value.llm2 === 'running')
+const llmRunning = computed(() => nodeStatus.value.llm === 'running')
 
 // Running state for button disable
 const isRunning = computed(() => currentStep.value > 0 && !actionText.value.includes('完成'))
-
-// Arrow points helper for template
-function getArrowPoints(fromId: string, toId: string): string {
-  const positions: Record<string, { x: number; y: number }> = {
-    input: { x: 100, y: 120 },
-    llm1: { x: 400, y: 120 },
-    tool: { x: 700, y: 120 },
-    llm2: { x: 400, y: 320 },
-    output: { x: 100, y: 320 }
-  }
-  const from = positions[fromId]
-  const to = positions[toId]
-  if (!from || !to) return '0,0 0,0 0,0'
-
-  let arrowX = to.x
-  let arrowY = to.y
-
-  if (Math.abs(from.y - to.y) < 50) {
-    arrowX = from.x > to.x ? to.x + 60 : to.x - 60
-    return `${arrowX},${arrowY} ${arrowX - 8},${arrowY - 5} ${arrowX - 8},${arrowY + 5}`
-  }
-
-  arrowY = from.y > to.y ? to.y + 30 : to.y - 30
-  return `${arrowX},${arrowY} ${arrowX - 5},${arrowY - 8} ${arrowX + 5},${arrowY - 8}`
-}
 </script>
 
 <template>
@@ -229,11 +224,6 @@ function getArrowPoints(fromId: string, toId: string): string {
             <feMergeNode in="SourceGraphic"/>
           </feMerge>
         </filter>
-
-        <!-- Flowing animation for active edges -->
-        <pattern id="flowPattern" patternUnits="userSpaceOnUse" width="20" height="1">
-          <line x1="0" y1="0.5" x2="10" y2="0.5" stroke="#fbbf24" stroke-width="2"/>
-        </pattern>
       </defs>
 
       <!-- HUD Corner Decorations -->
@@ -304,20 +294,20 @@ function getArrowPoints(fromId: string, toId: string): string {
           <text x="110" y="200" text-anchor="middle" fill="#0ea5e9" font-size="10">天气如何？</text>
         </g>
 
-        <!-- LLM1 Node -->
-        <g :class="['node', `node-${nodeStatus.llm1}`]">
+        <!-- LLM Node -->
+        <g :class="['node', `node-${nodeStatus.llm}`]">
           <rect
-            :x="nodes.llm1.x - 60"
-            :y="nodes.llm1.y - 30"
+            :x="nodes.llm.x - 60"
+            :y="nodes.llm.y - 30"
             width="120"
             height="60"
             rx="8"
-            :fill="getNodeFill(nodeStatus.llm1)"
-            :stroke="getNodeStroke(nodes.llm1.type)"
+            :fill="getNodeFill(nodeStatus.llm)"
+            :stroke="getNodeStroke(nodes.llm.type)"
             stroke-width="2"
           />
           <!-- Spinning gear when running -->
-          <g v-if="llm1Running" :transform="`translate(${nodes.llm1.x}, ${nodes.llm1.y})`">
+          <g v-if="llmRunning" :transform="`translate(${nodes.llm.x}, ${nodes.llm.y})`">
             <circle r="15" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
             <g class="gear-spin">
               <line x1="0" y1="-8" x2="0" y2="8" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
@@ -328,14 +318,14 @@ function getArrowPoints(fromId: string, toId: string): string {
           </g>
           <text
             v-else
-            :x="nodes.llm1.x"
-            :y="nodes.llm1.y + 5"
+            :x="nodes.llm.x"
+            :y="nodes.llm.y + 5"
             text-anchor="middle"
             fill="white"
             font-size="14"
             font-weight="500"
           >
-            {{ nodes.llm1.label }}
+            {{ nodes.llm.label }}
           </text>
         </g>
 
@@ -386,41 +376,6 @@ function getArrowPoints(fromId: string, toId: string): string {
           </text>
         </g>
 
-        <!-- LLM2 Node -->
-        <g :class="['node', `node-${nodeStatus.llm2}`]">
-          <rect
-            :x="nodes.llm2.x - 60"
-            :y="nodes.llm2.y - 30"
-            width="120"
-            height="60"
-            rx="8"
-            :fill="getNodeFill(nodeStatus.llm2)"
-            :stroke="getNodeStroke(nodes.llm2.type)"
-            stroke-width="2"
-          />
-          <!-- Spinning gear when running -->
-          <g v-if="llm2Running" :transform="`translate(${nodes.llm2.x}, ${nodes.llm2.y})`">
-            <circle r="15" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-            <g class="gear-spin">
-              <line x1="0" y1="-8" x2="0" y2="8" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
-              <line x1="-8" y1="0" x2="8" y2="0" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
-              <line x1="-6" y1="-6" x2="6" y2="6" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
-              <line x1="6" y1="-6" x2="-6" y2="6" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
-            </g>
-          </g>
-          <text
-            v-else
-            :x="nodes.llm2.x"
-            :y="nodes.llm2.y + 5"
-            text-anchor="middle"
-            fill="white"
-            font-size="14"
-            font-weight="500"
-          >
-            {{ nodes.llm2.label }}
-          </text>
-        </g>
-
         <!-- Output Node -->
         <g :class="['node', `node-${nodeStatus.output}`]">
           <rect
@@ -447,8 +402,8 @@ function getArrowPoints(fromId: string, toId: string): string {
 
         <!-- Final answer (step 5) -->
         <g v-if="showFinalAnswer" class="final-answer">
-          <rect x="60" y="370" width="140" height="35" rx="6" fill="#1a1a30" stroke="#22c55e" stroke-width="1"/>
-          <text x="130" y="392" text-anchor="middle" fill="#22c55e" font-size="11">
+          <rect x="330" y="390" width="140" height="35" rx="6" fill="#1a1a30" stroke="#22c55e" stroke-width="1"/>
+          <text x="400" y="412" text-anchor="middle" fill="#22c55e" font-size="11">
             北京今天晴天，22°C
           </text>
         </g>
