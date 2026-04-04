@@ -80,7 +80,11 @@ export interface HeroItem {
   }
 }
 
-export type SlideItem = MarkdownItem | DiagramItem | ConfigurableAgentItem | SvgItem | TableItem | HeroItem
+export interface ToolCallAnimationItem {
+  type: 'tool-call-animation'
+}
+
+export type SlideItem = MarkdownItem | DiagramItem | ConfigurableAgentItem | SvgItem | TableItem | HeroItem | ToolCallAnimationItem
 
 export interface SlideContent {
   title?: string  // 可选：幻灯片标题
