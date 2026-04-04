@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import Slide from './components/Slide.vue'
 import { getAllSlides, courseConfig } from './slides'
 import './style.css'
@@ -10,6 +10,27 @@ const slides = getAllSlides()
 // 侧边栏状态
 const showToc = ref(false)
 
+// 懒加载状态
+const visibleIndices = reactive(new Set<number>())
+const slideHeights = reactive(new Map<number, number>())
+const slideRefs = new Map<number, HTMLElement>()
+let observer: IntersectionObserver | null = null
+
+// 缓冲区：可见幻灯片 ± 1
+function shouldRender(index: number): boolean {
+  for (const vi of visibleIndices) {
+    if (Math.abs(vi - index) <= 1) return true
+  }
+  return false
+}
+
+// 记录幻灯片 DOM 引用
+function setSlideRef(el: unknown, index: number) {
+  if (el instanceof HTMLElement) {
+    slideRefs.set(index, el)
+  }
+}
+
 // 切换侧边栏
 function toggleToc() {
   showToc.value = !showToc.value
@@ -17,18 +38,60 @@ function toggleToc() {
 
 // 滚动到指定幻灯片
 function scrollToSlide(index: number) {
-  const slideElements = document.querySelectorAll('.slide-section')
-  const targetElement = slideElements[index]
+  // 确保目标幻灯片已渲染
+  visibleIndices.add(index)
+  const targetElement = slideRefs.get(index)
   if (targetElement) {
     targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    showToc.value = false
   }
+  showToc.value = false
 }
 
 // 获取幻灯片在全部幻灯片中的索引
 function getSlideIndex(chapterId: string, slideId: string): number {
   return slides.findIndex(s => s.chapterId === chapterId && s.slideId === slideId)
 }
+
+// 记录已渲染幻灯片的高度
+function recordHeight(index: number) {
+  const el = slideRefs.get(index)
+  if (el) {
+    const height = el.getBoundingClientRect().height
+    if (height > 0) {
+      slideHeights.set(index, height)
+    }
+  }
+}
+
+onMounted(() => {
+  observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const index = Number((entry.target as HTMLElement).dataset.slideIndex)
+        if (isNaN(index)) continue
+
+        if (entry.isIntersecting) {
+          visibleIndices.add(index)
+        } else {
+          // 记录高度后再移除
+          recordHeight(index)
+          visibleIndices.delete(index)
+        }
+      }
+    },
+    { rootMargin: '300px 0px' }
+  )
+
+  // 观察所有幻灯片
+  slideRefs.forEach((el, index) => {
+    el.dataset.slideIndex = String(index)
+    observer!.observe(el)
+  })
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+})
 </script>
 
 <template>
@@ -60,21 +123,29 @@ function getSlideIndex(chapterId: string, slideId: string): number {
     </aside>
 
     <main class="scroll-content">
-      <!-- 所有幻灯片垂直排列 -->
+      <!-- 所有幻灯片垂直排列，懒加载 -->
       <section
         v-for="(slide, index) in slides"
         :key="`${slide.chapterId}-${slide.slideId}`"
+        :ref="(el: any) => setSlideRef(el, index)"
         class="slide-section"
         :class="{ 'slide-hero': slide.content.items?.some(item => item.type === 'hero') }"
       >
+        <template v-if="shouldRender(index)">
+          <div
+            v-if="!slide.content.items?.some(item => item.type === 'hero')"
+            class="slide-header"
+          >
+            <span class="slide-number">{{ index + 1 }}</span>
+            <h2 v-if="slide.content.title" class="slide-title">{{ slide.content.title }}</h2>
+          </div>
+          <Slide :content="slide.content" />
+        </template>
         <div
-          v-if="!slide.content.items?.some(item => item.type === 'hero')"
-          class="slide-header"
-        >
-          <span class="slide-number">{{ index + 1 }}</span>
-          <h2 v-if="slide.content.title" class="slide-title">{{ slide.content.title }}</h2>
-        </div>
-        <Slide :content="slide.content" />
+          v-else
+          class="slide-placeholder"
+          :style="{ height: (slideHeights.get(index) || 800) + 'px' }"
+        ></div>
       </section>
 
     </main>
@@ -192,6 +263,12 @@ function getSlideIndex(chapterId: string, slideId: string): number {
 /* 滚动内容区 */
 .scroll-content {
   padding-bottom: 4rem;
+}
+
+/* 懒加载占位符 */
+.slide-placeholder {
+  width: 100%;
+  background: transparent;
 }
 
 /* 幻灯片区块 */

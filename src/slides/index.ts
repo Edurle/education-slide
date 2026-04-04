@@ -34,6 +34,16 @@ export const courseConfig = {
         { id: '05-tool-calling', title: '工具调用演示' },
         { id: '06-mcp', title: 'MCP 协议' },
       ]
+    },
+    {
+      id: 'chapter3-rag',
+      title: '第三章：RAG 与智能检索',
+      slides: [
+        { id: '01-rag-overview', title: '为什么需要 RAG' },
+        { id: '02-traditional-rag', title: '传统 RAG：切分 + 向量化' },
+        { id: '03-hybrid-rag', title: '混合 RAG：多路召回' },
+        { id: '04-agentic-search', title: 'Agentic Search' },
+      ]
     }
   ]
 }
