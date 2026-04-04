@@ -6,6 +6,7 @@ import ConfigurableAgent from './ConfigurableAgent.vue'
 import SvgRenderer from './SvgRenderer.vue'
 import TableRenderer from './TableRenderer.vue'
 import HeroSlide from './HeroSlide.vue'
+import ToolCallAnimation from './ToolCallAnimation.vue'
 
 defineProps<{
   content: SlideContent
@@ -52,6 +53,10 @@ defineProps<{
           :config="content.items[0].config"
           class="slide-item"
         />
+        <ToolCallAnimation
+          v-else-if="content.items[0].type === 'tool-call-animation'"
+          class="slide-item"
+        />
       </div>
       <div class="split-right">
         <template v-for="(item, index) in content.items.slice(1)" :key="index">
@@ -83,6 +88,15 @@ defineProps<{
             :rows="item.rows"
             :variant="item.variant"
             :theme="item.theme"
+            class="slide-item"
+          />
+          <HeroSlide
+            v-else-if="item.type === 'hero'"
+            :config="item.config"
+            class="slide-item"
+          />
+          <ToolCallAnimation
+            v-else-if="item.type === 'tool-call-animation'"
             class="slide-item"
           />
         </template>
@@ -125,6 +139,10 @@ defineProps<{
         <HeroSlide
           v-else-if="item.type === 'hero'"
           :config="item.config"
+          class="slide-item"
+        />
+        <ToolCallAnimation
+          v-else-if="item.type === 'tool-call-animation'"
           class="slide-item"
         />
       </template>
