@@ -186,6 +186,34 @@ const resetAnimation = () => {
 // Computed for LLM spinning gear
 const llm1Running = computed(() => nodeStatus.value.llm1 === 'running')
 const llm2Running = computed(() => nodeStatus.value.llm2 === 'running')
+
+// Running state for button disable
+const isRunning = computed(() => currentStep.value > 0 && !actionText.value.includes('完成'))
+
+// Arrow points helper for template
+function getArrowPoints(fromId: string, toId: string): string {
+  const positions: Record<string, { x: number; y: number }> = {
+    input: { x: 100, y: 120 },
+    llm1: { x: 400, y: 120 },
+    tool: { x: 700, y: 120 },
+    llm2: { x: 400, y: 320 },
+    output: { x: 100, y: 320 }
+  }
+  const from = positions[fromId]
+  const to = positions[toId]
+  if (!from || !to) return '0,0 0,0 0,0'
+
+  let arrowX = to.x
+  let arrowY = to.y
+
+  if (Math.abs(from.y - to.y) < 50) {
+    arrowX = from.x > to.x ? to.x + 60 : to.x - 60
+    return `${arrowX},${arrowY} ${arrowX - 8},${arrowY - 5} ${arrowX - 8},${arrowY + 5}`
+  }
+
+  arrowY = from.y > to.y ? to.y + 30 : to.y - 30
+  return `${arrowX},${arrowY} ${arrowX - 5},${arrowY - 8} ${arrowX + 5},${arrowY - 8}`
+}
 </script>
 
 <template>
@@ -322,7 +350,7 @@ const llm2Running = computed(() => nodeStatus.value.llm2 === 'running')
           <text x="340" y="262" font-size="10" fill="#8b5cf6" font-family="monospace">}</text>
           <!-- Exec line -->
           <text v-if="showExecLine" x="330" y="285" font-size="9" fill="#0ea5e9" font-family="monospace" class="fade-in">
-            框架: execute("get_weather", {city: "北京"})
+            execute("get_weather", {city: "北京"}) → 调用工具
           </text>
         </g>
 
@@ -354,7 +382,7 @@ const llm2Running = computed(() => nodeStatus.value.llm2 === 'running')
         <g v-if="showToolResult" class="tool-result">
           <rect x="640" y="170" width="120" height="35" rx="6" fill="#1a1a30" stroke="#f59e0b" stroke-width="1"/>
           <text x="700" y="192" text-anchor="middle" fill="#22c55e" font-size="11" font-family="monospace">
-            {temp: 22°C, 晴天}
+            {temperature: 22, condition: "晴天"}
           </text>
         </g>
 
@@ -429,52 +457,12 @@ const llm2Running = computed(() => nodeStatus.value.llm2 === 'running')
 
     <!-- Controls -->
     <div class="controls">
-      <button class="btn-start" @click="startAnimation">开始演示</button>
-      <button class="btn-reset" @click="resetAnimation">重置</button>
+      <button class="btn-start" @click="startAnimation" :disabled="isRunning">开始演示</button>
+      <button class="btn-reset" @click="resetAnimation" :disabled="isRunning">重置</button>
       <div class="action-text">{{ actionText }}</div>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-// Helper function for arrow points
-function getArrowPoints(fromId: string, toId: string): string {
-  const nodes: Record<string, { x: number; y: number }> = {
-    input: { x: 100, y: 120 },
-    llm1: { x: 400, y: 120 },
-    tool: { x: 700, y: 120 },
-    llm2: { x: 400, y: 320 },
-    output: { x: 100, y: 320 }
-  }
-
-  const from = nodes[fromId]
-  const to = nodes[toId]
-
-  if (!from || !to) return '0,0 0,0 0,0'
-
-  // Calculate arrow position at target node edge
-  let arrowX = to.x
-  let arrowY = to.y
-
-  // Horizontal edges
-  if (Math.abs(from.y - to.y) < 50) {
-    arrowX = to.x - 60
-    if (from.x > to.x) arrowX = to.x + 60
-    return `${arrowX},${arrowY} ${arrowX - 8},${arrowY - 5} ${arrowX - 8},${arrowY + 5}`
-  }
-
-  // Vertical edges
-  arrowY = to.y - 30
-  if (from.y > to.y) arrowY = to.y + 30
-  return `${arrowX},${arrowY} ${arrowX - 5},${arrowY - 8} ${arrowX + 5},${arrowY - 8}`
-}
-
-export default {
-  methods: {
-    getArrowPoints
-  }
-}
-</script>
 
 <style scoped>
 .tool-call-animation {
@@ -584,6 +572,12 @@ svg {
   transform: translateY(0);
 }
 
+.btn-start:disabled {
+  background: rgba(139, 92, 246, 0.3);
+  cursor: not-allowed;
+  transform: none;
+}
+
 .btn-reset {
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.7);
@@ -603,6 +597,12 @@ svg {
 
 .btn-reset:active {
   transform: translateY(0);
+}
+
+.btn-reset:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .action-text {
