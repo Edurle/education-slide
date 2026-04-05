@@ -47,7 +47,6 @@ import type { AgentArchitectureConfig } from './agent-config'
 export interface ConfigurableAgentItem {
   type: 'configurable-agent'
   config: AgentArchitectureConfig
-  agentType?: 'qa' | 'tool' | 'langchain'  // 可选：连接真实后端
 }
 
 export interface SvgItem {

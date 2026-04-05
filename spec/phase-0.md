@@ -5,7 +5,6 @@
 * 搭建 Vue 3 + TypeScript 项目
 * 集成 Markdown 渲染、highlight.js、KaTeX
 * 安装 animate.js
-* 安装 LangChain 1.2 TS
 
 ## 前置要求
 
@@ -19,19 +18,16 @@
 | 0.1 | 创建 Vue 3 + TS 项目 | 使用 Vite：`npm create vite@latest vue-agent-course -- --template vue-ts` | 使用 TypeScript 模板，项目名规范化       |
 | 0.2 | 安装 Markdown 渲染库  | `npm install markdown-it markdown-it-katex highlight.js`               | 保证版本兼容，支持公式和代码高亮              |
 | 0.3 | 安装 animate.js    | `npm install animejs`                                              | 使用 animateplus 或最新 animate.js |
-| 0.4 | 安装 LangChain TS  | `npm install langchain @langchain/core`                                         | 安装langchain核心组件          |
-| 0.5 | 配置全局样式           | 引入 highlight.js 样式和 KaTeX 样式                                           | 确保代码块、公式渲染一致                  |
-| 0.6 | 安装 LangChain OpenAI | `npm install @langchain/openai` | 安装OpenAI api方便调用llm |
-| 0.7 | 创建目录结构 | 创建 `components/`, `agents/`, `slides/`, `utils/`, `types/` 文件夹及占位文件 | 见下方目录结构 |
-| 0.8 | 配置 TypeScript | 设置 `tsconfig.json`（paths 别名、严格模式） | 见下方 tsconfig 配置 |
-| 0.9 | 配置环境变量 | 创建 `.env.example` 和 `.env` | 添加 `VITE_OPENAI_API_KEY` |
-| 0.10 | 添加类型声明 | 安装缺失的类型库：`npm install -D @types/markdown-it` | 缺失类型时安装对应 @types 包 |
-| 0.11 | 验证环境 | 运行 `npm run dev` 确认项目启动成功 | 浏览器访问 http://localhost:5173 |
+| 0.4 | 配置全局样式           | 引入 highlight.js 样式和 KaTeX 样式                                           | 确保代码块、公式渲染一致                  |
+| 0.5 | 创建目录结构 | 创建 `components/`, `slides/`, `utils/`, `types/` 文件夹及占位文件 | 见下方目录结构 |
+| 0.6 | 配置 TypeScript | 设置 `tsconfig.json`（paths 别名、严格模式） | 见下方 tsconfig 配置 |
+| 0.7 | 添加类型声明 | 安装缺失的类型库：`npm install -D @types/markdown-it` | 缺失类型时安装对应 @types 包 |
+| 0.8 | 验证环境 | 运行 `npm run dev` 确认项目启动成功 | 浏览器访问 http://localhost:5173 |
 
 ## 约束
 
 * 所有依赖必须通过 npm 安装，版本明确
-* 项目结构应预留 `components/`, `agents/`, `slides/`, `utils/` 文件夹
+* 项目结构应预留 `components/`, `slides/`, `utils/` 文件夹
 * 保持 TypeScript 严格模式 (`"strict": true`)
 * Node.js 最低版本 22.x
 * **禁止使用 TSX**，统一使用 `.vue` 单文件组件
@@ -41,8 +37,6 @@
 ```
 src/
 ├── components/
-│   └── .gitkeep
-├── agents/
 │   └── .gitkeep
 ├── slides/
 │   └── .gitkeep
@@ -104,15 +98,7 @@ export default defineConfig({
 
 ## 环境变量
 
-`.env.example`:
-```
-VITE_OPENAI_API_KEY=your_api_key_here
-```
-
-`.env` (本地使用，不提交到 git):
-```
-VITE_OPENAI_API_KEY=sk-xxx...
-```
+本项目为纯前端应用，无需配置环境变量。
 
 ## 验收清单
 

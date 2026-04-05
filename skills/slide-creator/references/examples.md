@@ -155,7 +155,6 @@ export default {
         ],
         defaultInput: '今天北京的天气如何？',
       },
-      agentType: 'tool',
     },
     {
       type: 'markdown',

@@ -157,7 +157,6 @@ interface SlideContent {
     executionSteps: [...],
     defaultInput: '默认输入'
   },
-  agentType: 'qa' | 'tool' | 'langchain'
 }
 ```
 

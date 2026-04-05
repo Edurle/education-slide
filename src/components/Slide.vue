@@ -32,7 +32,6 @@ defineProps<{
         <ConfigurableAgent
           v-else-if="content.items[0].type === 'configurable-agent'"
           :config="content.items[0].config"
-          :agent-type="content.items[0].agentType"
           class="slide-item"
         />
         <SvgRenderer
@@ -74,7 +73,6 @@ defineProps<{
           <ConfigurableAgent
             v-else-if="item.type === 'configurable-agent'"
             :config="item.config"
-            :agent-type="item.agentType"
             class="slide-item"
           />
           <SvgRenderer
@@ -120,7 +118,6 @@ defineProps<{
         <ConfigurableAgent
           v-else-if="item.type === 'configurable-agent'"
           :config="item.config"
-          :agent-type="item.agentType"
           class="slide-item"
         />
         <SvgRenderer

@@ -183,28 +183,18 @@ interface SvgItem {
 
 ## ConfigurableAgentItem
 
-可交互的 Agent 架构演示，支持动画和真实后端连接。
+可交互的 Agent 架构演示，通过预设步骤展示动画。
 
 ```typescript
 interface ConfigurableAgentItem {
   type: 'configurable-agent'
   config: AgentArchitectureConfig
-  agentType?: 'qa' | 'tool' | 'langchain'  // 可选：连接真实后端
 }
 ```
 
 ### AgentArchitectureConfig
 
 详见 `agent-config-guide.md`
-
-### agentType 说明
-
-| 值 | 说明 |
-|---|------|
-| 不设置 | 仅展示动画，不连接后端 |
-| `'qa'` | 连接 QA Agent 后端 |
-| `'tool'` | 连接工具调用 Agent 后端 |
-| `'langchain'` | 连接 LangChain Agent 后端 |
 
 ### 示例
 
@@ -227,7 +217,13 @@ interface ConfigurableAgentItem {
       { from: 'llm', to: 'output', label: '回答' },
     ],
     defaultInput: '今天北京的天气如何？',
+    executionSteps: [
+      { nodeId: 'input', action: '接收用户输入', activateEdges: ['input-llm'] },
+      { nodeId: 'llm', action: 'LLM 分析意图', activateEdges: ['llm-tools'] },
+      { nodeId: 'tools', action: '调用工具', activateEdges: ['tools-llm'] },
+      { nodeId: 'llm', action: 'LLM 生成回答', activateEdges: ['llm-output'] },
+      { nodeId: 'output', action: '输出结果' },
+    ],
   },
-  agentType: 'tool',
 }
 ```

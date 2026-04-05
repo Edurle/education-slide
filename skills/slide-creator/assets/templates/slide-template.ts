@@ -68,7 +68,6 @@ export default {
     //     ],
     //     defaultInput: '默认输入文本',
     //   },
-    //   agentType: 'tool', // 'qa' | 'tool' | 'langchain'（可选）
     // },
   ],
 } satisfies SlideContent

@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
 import Diagram from './Diagram.vue'
-import { runAgent } from '@/api/agent'
 import { convertToNodes, convertToEdges } from '@/utils/agentConfigConverter'
 import type { AgentArchitectureConfig, AgentExecutionStep } from '@/types/agent-config'
-import type { DiagramNode, DiagramEdge, NodeStatus } from '@/types'
+import type { DiagramNode, DiagramEdge } from '@/types'
 
 const props = defineProps<{
   config: AgentArchitectureConfig
-  agentType?: 'qa' | 'tool' | 'langchain'
 }>()
 
 // 转换配置为 Diagram 数据
@@ -59,7 +57,7 @@ function fullReset() {
   error.value = ''
 }
 
-// 执行 Agent（两种模式）
+// 执行 Agent（预设演示模式）
 async function executeAgent() {
   if (isRunning.value || !userInput.value.trim()) return
 
@@ -72,45 +70,10 @@ async function executeAgent() {
   error.value = ''
   resetDiagram()
 
-  // 模式1：使用预设执行步骤演示（无服务端）
-  if (props.config.executionSteps && !props.agentType) {
+  if (props.config.executionSteps) {
     await runPresetDemo(props.config.executionSteps)
-    return
-  }
-
-  // 模式2：连接服务端 SSE
-  try {
-    await runAgent({
-      agentType: props.agentType || 'tool',
-      input: userInput.value,
-      onNodeStatus: (nodeId: string, status: NodeStatus) => {
-        const node = nodes.value.find(n => n.id === nodeId)
-        if (node) node.status = status
-        diagramRef.value?.updateNodeStatus(nodeId, status)
-      },
-      onEdgeActivate: (edgeId: string) => {
-        diagramRef.value?.activateEdge(edgeId)
-      },
-      onEdgeDeactivate: (edgeId: string) => {
-        diagramRef.value?.deactivateEdge(edgeId)
-      },
-      onAction: (action: string) => {
-        currentAction.value = action
-      },
-      onResult: (res: string) => {
-        result.value = res
-        messages.value.push({ role: 'ai', content: res })
-      },
-      onError: (err: string) => {
-        error.value = err
-      },
-      onComplete: () => {
-        isRunning.value = false
-        currentAction.value = '完成'
-      }
-    })
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Unknown error'
+  } else {
+    error.value = '该演示需要配置 executionSteps 才能运行'
     isRunning.value = false
   }
 }

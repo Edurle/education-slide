@@ -30,8 +30,14 @@ export default {
           { from: 'llm', to: 'output', label: '回答' },
         ],
         defaultInput: '今天北京的天气如何？',
+        executionSteps: [
+          { nodeId: 'input', action: '接收用户输入：今天北京的天气如何？', activateEdges: ['input-llm'] },
+          { nodeId: 'llm', action: 'LLM 分析用户意图，决定调用天气工具...', activateEdges: ['llm-tools'] },
+          { nodeId: 'tools', action: '调用天气查询工具，获取北京天气数据', activateEdges: ['tools-llm'] },
+          { nodeId: 'llm', action: 'LLM 整合工具结果，生成自然语言回答', activateEdges: ['llm-output'] },
+          { nodeId: 'output', action: '输出：北京今天晴，温度 22°C' },
+        ],
       },
-      agentType: 'tool',
     },
     {
       type: 'markdown',
